@@ -41,10 +41,11 @@ public class CertificateBean extends ProviderAttribute{
 		this.name = new SimpleObjectProperty<CertificateBean>(this);	
 		
 		Map<String, String> attr = new HashMap<String, String>();
-		for(String pair : parentCert.getSubjectX500Principal().toString().split(",")){
+		for(String pair : parentCert.getSubjectDN().toString().split(",")){
+			System.out.println(parentCert.getSubjectDN());
 			String[] attributes = pair.split("=");	
 			if(attributes.length == 2)
-				attr.put(attributes[0], attributes[1]);
+				attr.put(attributes[0].trim(), attributes[1].trim());
 		}
 		this.stringName = attr.get("CN") != null ? attr.get("CN") : attr.get("OU");		
 	}
@@ -75,10 +76,11 @@ public class CertificateBean extends ProviderAttribute{
 		}
 		
 		Map<String, String> attr = new HashMap<String, String>();
-		for(String pair : parent.getIssuerX500Principal().toString().split(",")){
+		for(String pair : parent.getSubjectDN().toString().split(",")){
+			System.out.println(parent.getSubjectDN());
 			String[] attributes = pair.split("=");	
 			if(attributes.length == 2)
-				attr.put(attributes[0], attributes[1]);
+				attr.put(attributes[0].trim(), attributes[1].trim());
 		}
 		this.stringName = attr.get("CN") != null ? attr.get("CN") : attr.get("OU");
 		
@@ -91,10 +93,11 @@ public class CertificateBean extends ProviderAttribute{
 		parentCert = cert;
 		childrenCerts = new ArrayList<>();
 		Map<String, String> attr = new HashMap<String, String>();
-		for(String pair : cert.getIssuerX500Principal().toString().split(",")){
+		for(String pair : cert.getSubjectDN().toString().split(",")){
+			System.out.println(cert.getSubjectDN());
 			String[] attributes = pair.split("=");	
 			if(attributes.length == 2)
-				attr.put(attributes[0], attributes[1]);
+				attr.put(attributes[0].trim(), attributes[1].trim());
 		}
 		name = new SimpleObjectProperty<CertificateBean>(this);
 		
