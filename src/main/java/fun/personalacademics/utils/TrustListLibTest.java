@@ -1,24 +1,5 @@
 package fun.personalacademics.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import com.zeva.temp.jaxb.datamodel.DigitalIdentityType;
-import com.zeva.temp.jaxb.datamodel.ObjectFactory;
-import com.zeva.temp.jaxb.datamodel.TrustStatusListType;
-import com.zeva.tlGen.dataModel.ProviderAttribute;
-
 public class TrustListLibTest {
 
 	public static void main(String[] args) throws Exception {

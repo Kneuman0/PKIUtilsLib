@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -23,10 +24,10 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
-import com.zeva.tlGen.dataModel.CertificateBean;
-
+import fun.personalacademics.model.CertificateBean;
 import sun.misc.BASE64Encoder;
 
+@SuppressWarnings("restriction")
 public abstract class CertificateUtilities {
 
 	
@@ -99,7 +100,6 @@ public abstract class CertificateUtilities {
 	}
 
 	
-	@SuppressWarnings("restriction")
 	public static String toPemFormat(X509Certificate cert) throws CertificateEncodingException{
 		BASE64Encoder encoder = new BASE64Encoder();
 		return toPemFormat(encoder.encode(cert.getEncoded()));
@@ -154,7 +154,9 @@ public abstract class CertificateUtilities {
 		return newCert;
 	}
 	
-	
+	public static String generateCertThumbprint(X509Certificate cert) throws CertificateEncodingException{
+		return DigestUtils.sha1Hex(cert.getEncoded());
+	}
 	
 	
 }

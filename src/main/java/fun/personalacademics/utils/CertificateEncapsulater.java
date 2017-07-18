@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Principal;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -23,19 +22,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.crypto.dsig.XMLSignatureException;
-
 import java.security.cert.X509Certificate;
 
-import org.apache.xml.security.exceptions.Base64DecodingException;
-import org.apache.xml.security.exceptions.XMLSecurityException;
-
-import com.zeva.tlGen.dataModel.CertificateBean;
-import com.zeva.trustlist.popup.PasswordPopup;
-
-import fun.personalacademics.model.FileSystemKeyStoreKeyingDataProviderFactory;
+import fun.personalacademics.model.CertificateBean;
+import fun.personalacademics.popup.PasswordPopup;
 import javafx.scene.control.ButtonType;
-import xades4j.providers.impl.FileSystemKeyStoreKeyingDataProvider;
 
 public class CertificateEncapsulater {
 	
@@ -141,7 +132,7 @@ public class CertificateEncapsulater {
 	 * @throws IOException
 	 * @throws Base64DecodingException
 	 */
-	private void loadP7BFile(File certFile) throws CertificateException, IOException, Base64DecodingException{
+	private void loadP7BFile(File certFile) throws CertificateException, IOException{
 		addCertsFromFile("X.509", certFile);
 	}
 	
@@ -229,12 +220,8 @@ public class CertificateEncapsulater {
 		}		
 	}
 	
-	private void loadP7BFile(String certFile) throws CertificateException, IOException, Base64DecodingException{
+	private void loadP7BFile(String certFile) throws CertificateException, IOException{
 		addCertsFromString("X.509", certFile);
-	}
-	
-	private void loadPFXFile(String certFile) throws CertificateException, IOException, XMLSecurityException, KeyStoreException, NoSuchAlgorithmException{
-		loadPFXFile(new File(certFile));
 	}
 	
 	private void addCertsFromFile(String instanceType, File certFile) throws CertificateException, IOException{
@@ -273,7 +260,6 @@ public class CertificateEncapsulater {
 	
 	private void addCertFromPEMString(String base64) throws CertificateException{
 		CertificateFactory factory = CertificateFactory.getInstance("X.509");
-		@SuppressWarnings("unchecked")
 		X509Certificate cert = 
 				(X509Certificate)factory.generateCertificate(
 						new ByteArrayInputStream(base64.getBytes()));

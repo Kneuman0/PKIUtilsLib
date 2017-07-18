@@ -22,13 +22,9 @@ import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
 
+import fun.personalacademics.model.CertificateBean;
 import javafx.scene.control.TreeItem;
 import javafx.stage.FileChooser.ExtensionFilter;
-
-import com.zeva.temp.jaxb.datamodel.DigitalIdentityType;
-import com.zeva.temp.jaxb.datamodel.TrustStatusListType;
-import com.zeva.tlGen.dataModel.CertificateBean;
-import com.zeva.tlGen.dataModel.ProviderAttribute;
 
 public class CertificateUtilFactory extends CertificateUtilities{
 		
@@ -148,28 +144,7 @@ public class CertificateUtilFactory extends CertificateUtilities{
 		filters.add(new ExtensionFilter("Security Certificate", "*.cer"));
 		return filters;
 	}
-
-	public TrustStatusListType buildTrustList(List<ProviderAttribute> beans, String defaultLocation) throws FileNotFoundException {
-		
-//		TrustList tl = XmlUtilities.<TrustList>readInObjectFromXML(defaultLocation);
-//		tl.setTsps(beans);
-
-		return null;
-	}
-
 	
-
-	public void exportNodesToPem(List<TreeItem<ProviderAttribute>> nodes,
-			File location) throws CertificateEncodingException, IOException {
-		List<X509Certificate> certs = new ArrayList<>();
-		for (TreeItem<ProviderAttribute> node : nodes)
-			certs.add(node.getValue().<DigitalIdentityType>getEncapsulatedBean().getParentCert());
-
-		exportCertsToPem(certs, location);
-
-	}
-
-
 	public static void exportCertsToPem(List<X509Certificate> certs,
 			File location) throws CertificateEncodingException, IOException {
 

@@ -13,8 +13,8 @@ import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
-import com.zeva.certs.utils.DataCertificateUtilities;
-
+import fun.personalacademics.utils.CertificateUtilities;
+import fun.personalacademics.model.ProviderAttribute;
 import javafx.beans.property.SimpleObjectProperty;
 
 public class CertificateBean extends ProviderAttribute{
@@ -173,11 +173,11 @@ public class CertificateBean extends ProviderAttribute{
 	}
 	
 	public String getX509SKI(){
-		return DataCertificateUtilities.generateX509SKI(parentCert);
+		return CertificateUtilities.generateX509SKI(parentCert);
 	}
 	
 	public String getThumbprint() throws CertificateEncodingException{
-		return DataCertificateUtilities.generateCertThumbprint(parentCert);
+		return CertificateUtilities.generateCertThumbprint(parentCert);
 	}
 
 	public String toString(){

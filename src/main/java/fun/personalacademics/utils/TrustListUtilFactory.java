@@ -18,39 +18,13 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Optional;
 
 import javax.xml.bind.DatatypeConverter;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.TreeItem;
+import fun.personalacademics.model.CertificateBean;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-
-import com.zeva.temp.jaxb.datamodel.AddressType;
-import com.zeva.temp.jaxb.datamodel.DigitalIdentityListType;
-import com.zeva.temp.jaxb.datamodel.DigitalIdentityType;
-import com.zeva.temp.jaxb.datamodel.ElectronicAddressType;
-import com.zeva.temp.jaxb.datamodel.ExtensionsListType;
-import com.zeva.temp.jaxb.datamodel.InternationalNamesType;
-import com.zeva.temp.jaxb.datamodel.MultiLangNormStringType;
-import com.zeva.temp.jaxb.datamodel.NonEmptyMultiLangURIListType;
-import com.zeva.temp.jaxb.datamodel.OtherTSLPointersType;
-import com.zeva.temp.jaxb.datamodel.PostalAddressListType;
-import com.zeva.temp.jaxb.datamodel.PostalAddressType;
-import com.zeva.temp.jaxb.datamodel.TSPInformationType;
-import com.zeva.temp.jaxb.datamodel.TSPServiceInformationType;
-import com.zeva.temp.jaxb.datamodel.TSPServiceType;
-import com.zeva.temp.jaxb.datamodel.TSPType;
-import com.zeva.temp.jaxb.datamodel.TrustServiceProviderListType;
-import com.zeva.temp.jaxb.datamodel.TrustStatusListType;
-import com.zeva.tlGen.dataModel.CertificateBean;
-import com.zeva.tlGen.dataModel.ProviderAttribute;
-import com.zeva.tlGen.dataModel.TLPointer;
 
 public class TrustListUtilFactory extends CertificateUtilities{
 		
@@ -161,90 +135,7 @@ public class TrustListUtilFactory extends CertificateUtilities{
 		return filters;
 	}
 
-	public TrustStatusListType buildTrustList(List<ProviderAttribute> beans, TrustStatusListType tl) throws FileNotFoundException {
-		System.out.println(tl.getSchemeInformation().getExperimentalElement());
-		TSPType tsp = createEmptyTSPType();
 		
-		for(ProviderAttribute prov : beans){
-			DigitalIdentityType cert = prov.<DigitalIdentityType>getEncapsulatedBean();
-			
-			TSPServiceType service = new TSPServiceType();
-			TSPServiceInformationType info = new TSPServiceInformationType();
-			
-			InternationalNamesType serviceName = new InternationalNamesType();
-			MultiLangNormStringType name = new MultiLangNormStringType();
-			name.setLang("en");
-			name.setValue(cert.getStringName());
-			serviceName.getName().add(name);
-			info.setServiceName(serviceName);
-			
-			info.setServiceTypeIdentifier("http://uri.etsi.org/TrstSvc/Svctype/CA/QC");
-			
-			try {
-				GregorianCalendar c = new GregorianCalendar();
-				c.setTime(cert.getParentCert().getNotBefore());
-				info.setStatusStartingTime(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
-			} catch (DatatypeConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			info.setServiceStatus(cert.isRevoked() ? "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/withdrawn"
-					: "http://uri.etsi.org/TrstSvc/TrustedList/Svcstatus/granted");
-			
-			DigitalIdentityListType idList = new DigitalIdentityListType();
-			idList.getDigitalId().add(cert);
-			info.setServiceDigitalIdentity(idList);
-			
-			service.setServiceInformation(info);
-			
-			tsp.getServices().add(service);
-		}
-		
-		TrustServiceProviderListType tspList = new TrustServiceProviderListType();
-		tl.setTrustServiceProviderList(tspList);
-		tl.getTrustServiceProviderList().getTrustServiceProvider().add(tsp);
-		System.out.println(tl.getTrustServiceProviderList().getTrustServiceProvider().get(0).getTSPServices());
-		return tl;
-	}
-	
-	public TreeItem<ProviderAttribute> buildProvider(TSPType provider){
-		TreeItem<ProviderAttribute> tsp = new TreeItem<ProviderAttribute>(provider);
-		for(TSPServiceType service : provider.getServices()){
-			TreeItem<ProviderAttribute> serviceNode = buildService(service);
-			tsp.getChildren().add(serviceNode);		
-		}
-		
-		return tsp;
-	}
-	
-	public TreeItem<ProviderAttribute> buildService(TSPServiceType service){
-		TreeItem<ProviderAttribute> serviceNode = new TreeItem<ProviderAttribute>(service.initialize());
-		
-		for(DigitalIdentityType cert : service.getAllDigitalIDs()){	
-			ProviderAttribute attr = cert.initialize();
-			if(cert.getParentCert() != null){
-				serviceNode.getChildren().add(new TreeItem<ProviderAttribute>(attr));
-			}
-		}
-		
-		return serviceNode;
-	}
-	
-	public TreeItem<ProviderAttribute> buildCertificate(DigitalIdentityType cert){
-		cert.initialize();
-		return cert.getParentCert() != null ? new TreeItem<ProviderAttribute>(cert) : null;		
-	}
-
-	public void exportNodesToPem(List<TreeItem<ProviderAttribute>> nodes,
-			File location) throws CertificateEncodingException, IOException {
-		List<X509Certificate> certs = new ArrayList<>();
-		for (TreeItem<ProviderAttribute> node : nodes)
-			certs.add(node.getValue().<DigitalIdentityType>getEncapsulatedBean().getParentCert());
-
-		exportCertsToPem(certs, location);
-
-	}
 
 	public static void exportCertsToPem(List<X509Certificate> certs,
 			File location) throws CertificateEncodingException, IOException {
@@ -267,38 +158,6 @@ public class TrustListUtilFactory extends CertificateUtilities{
 		writer.close();
 	}
 	
-	public List<ProviderAttribute> extractCertificates(TrustStatusListType tl){
-		List<ProviderAttribute> certs = new ArrayList<ProviderAttribute>();
-		for(TSPType tsp : tl.getTrustServiceProviderList().getTrustServiceProvider()){
-			for(TSPServiceType service : tsp.getServices()){
-				certs.addAll(service.getCerts());
-			}
-		}
-		
-		return certs;
-	}
-	
-	public TSPType createEmptyTSPType(){
-		TSPType provider = new TSPType();
-		TSPInformationType info = new TSPInformationType();
-		
-		AddressType addr = new AddressType();
-		PostalAddressListType postAddrList = new PostalAddressListType();
-		ElectronicAddressType elecAdd = new ElectronicAddressType();
-		addr.setPostalAddresses(postAddrList);
-		addr.setElectronicAddress(elecAdd);
-		info.setTSPAddress(addr);
-		
-		info.setTSPInformationExtensions(new ExtensionsListType());
-		info.setTSPInformationURI(new NonEmptyMultiLangURIListType());
-		info.setTSPName(new InternationalNamesType());
-		info.setTSPTradeName(new InternationalNamesType());
-		
-		provider.setTSPInformation(info);
-		return provider;
-		
-	}
-	
 	
 	public List<ExtensionFilter> getSupportedSigningFilters(){
 		List<ExtensionFilter> filters = new ArrayList<FileChooser.ExtensionFilter>();
@@ -307,15 +166,4 @@ public class TrustListUtilFactory extends CertificateUtilities{
 		return filters;
 	}
 	
-	public TrustStatusListType buildTrustListofLists(List<TreeItem<TLPointer>> pointers, TrustStatusListType tl){
-		OtherTSLPointersType pointerList = new OtherTSLPointersType();
-		for(TreeItem<TLPointer> pointer : pointers){
-			pointerList.getOtherTSLPointer().add(pointer.getValue().getEncapsulatedBean());
-		}
-		
-		tl.getSchemeInformation().setPointersToOtherTSL(pointerList);
-		
-		return tl;
-	}
-
 }
