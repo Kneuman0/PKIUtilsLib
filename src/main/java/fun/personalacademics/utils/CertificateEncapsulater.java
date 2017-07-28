@@ -30,7 +30,7 @@ import javafx.scene.control.ButtonType;
 
 public class CertificateEncapsulater {
 	
-	public static enum CERT_TYPES {CER, PEM, P7B, P7C, PFX, P12};
+	public static enum CERT_TYPES {CER, DER, PEM, CRT, P7B, P7C, PFX, P12};
 	List<X509Certificate> certs;
 	
 	/**
@@ -50,8 +50,10 @@ public class CertificateEncapsulater {
 			loadP7BFile(certFile);
 		}else if(certFile.getAbsolutePath().toLowerCase().endsWith("pfx")){
 			loadPFXFile(certFile);
-		}else if(certFile.getAbsolutePath().toLowerCase().endsWith(".p12")){
-			loadPFXFile(certFile);
+		}else if(certFile.getAbsolutePath().toLowerCase().endsWith("p12")){
+			loadP7BFile(certFile);
+		}else if(certFile.getAbsolutePath().toLowerCase().endsWith("crt")){
+			loadPEMFile(certFile);
 		}else{
 			throw new Exception(certFile.getAbsolutePath() + "is not a supported file type");
 		}
@@ -72,12 +74,12 @@ public class CertificateEncapsulater {
 	 */
 	public CertificateEncapsulater(String base64, CERT_TYPES type) throws Exception{
 		certs = new ArrayList<>();
-		if(type == CERT_TYPES.CER){
-			loadCERFile(base64);
+		if(type == CERT_TYPES.CRT){
+			loadPEMFile(base64);
 		}else if(type == CERT_TYPES.PEM){
 			loadPEMFile(base64);
 		}else {
-			loadP7BFile(base64);
+			throw new Exception("The only supported base 64 certificates extensions are CRT and PEM");
 		}
 	}
 	
@@ -99,7 +101,14 @@ public class CertificateEncapsulater {
 			loadPEMFile(certFile);
 		}else if(ext == CERT_TYPES.PFX){
 			loadPFXFile(certFile);
+		}else if(ext == CERT_TYPES.CRT){
+			loadPEMFile(certFile);
+		}else if(ext == CERT_TYPES.P7B){
+			loadP7BFile(certFile);
+		}else if(ext == CERT_TYPES.DER){
+			loadCERFile(certFile);
 		}else {
+			// Must be type P7C
 			loadP7BFile(certFile);
 		}
 	}
@@ -265,6 +274,15 @@ public class CertificateEncapsulater {
 						new ByteArrayInputStream(base64.getBytes()));
 		certs.add(cert);
 		
+	}
+	
+	public static List<CertificateBean> encapsulateCertificates(List<X509Certificate> certs){
+		List<CertificateBean> beans = new ArrayList<>();
+		for(X509Certificate cert : certs){
+			beans.add(new CertificateBean(cert));
+		}
+		
+		return beans;
 	}
 	
 	

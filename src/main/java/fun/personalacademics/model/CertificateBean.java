@@ -42,7 +42,6 @@ public class CertificateBean extends ProviderAttribute{
 		
 		Map<String, String> attr = new HashMap<String, String>();
 		for(String pair : parentCert.getSubjectDN().toString().split(",")){
-			System.out.println(parentCert.getSubjectDN());
 			String[] attributes = pair.split("=");	
 			if(attributes.length == 2)
 				attr.put(attributes[0].trim(), attributes[1].trim());
@@ -77,7 +76,6 @@ public class CertificateBean extends ProviderAttribute{
 		
 		Map<String, String> attr = new HashMap<String, String>();
 		for(String pair : parent.getSubjectDN().toString().split(",")){
-			System.out.println(parent.getSubjectDN());
 			String[] attributes = pair.split("=");	
 			if(attributes.length == 2)
 				attr.put(attributes[0].trim(), attributes[1].trim());
@@ -94,7 +92,6 @@ public class CertificateBean extends ProviderAttribute{
 		childrenCerts = new ArrayList<>();
 		Map<String, String> attr = new HashMap<String, String>();
 		for(String pair : cert.getSubjectDN().toString().split(",")){
-			System.out.println(cert.getSubjectDN());
 			String[] attributes = pair.split("=");	
 			if(attributes.length == 2)
 				attr.put(attributes[0].trim(), attributes[1].trim());
