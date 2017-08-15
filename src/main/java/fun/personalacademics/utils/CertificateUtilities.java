@@ -44,6 +44,19 @@ public abstract class CertificateUtilities {
 		
 		return DatatypeConverter.printHexBinary(array);
 	}
+	
+	public static String generatePublicKeyString(X509Certificate cert){
+		JcaX509ExtensionUtils util = null;
+		try {
+			util = new JcaX509ExtensionUtils();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return RadixConverter.binaryTextToHex(
+				util.createSubjectKeyIdentifier(cert.getPublicKey()).getKeyIdentifier());
+	}
 
 
 	public static String insertPeriodically(String text, String insert,
@@ -156,6 +169,21 @@ public abstract class CertificateUtilities {
 	
 	public static String generateCertThumbprint(X509Certificate cert) throws CertificateEncodingException{
 		return DigestUtils.sha1Hex(cert.getEncoded());
+	}
+	
+	public static String toColonSepHex(String hex){
+		return insertPeriodically(hex.replaceAll("[^0-9a-zA-z ]", "").replace(" ", ":").toUpperCase(), "\n", 66);
+	}
+	
+	public static String getHexASN1SubjectPubKeyInfo(X509Certificate cert){
+		SubjectPublicKeyInfo pubKeyInfo = SubjectPublicKeyInfo.getInstance(cert.getPublicKey().getEncoded());
+		return RadixConverter.binaryTextToHex(pubKeyInfo.getPublicKeyData().getBytes());
+	}
+	
+	public static String printExtension(X509Certificate cert, String extension){
+		return "Extension: " + extension + "\nDescription: "
+				+ Extensions.getExtensionDescription(extension) + "\nValue: " +
+				RadixConverter.binaryTextToHex(cert.getExtensionValue(extension));
 	}
 	
 	

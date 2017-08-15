@@ -3,6 +3,8 @@ package fun.personalacademics.utils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import javax.xml.bind.DatatypeConverter;
+
 public class RadixConverter {
 	
 	private final static BigInteger TWO = BigInteger.valueOf(2);
@@ -106,5 +108,15 @@ public class RadixConverter {
 
 	    return value;
 	}
+	
+	public static String binaryTextToHex(byte[] binary){
+		return DatatypeConverter.printHexBinary(binary);
+	}
+	
+	public static String binaryToASCII(byte[] binary){
+		return hexToASCII(binaryTextToHex(binary));
+	}
+	
+	
 
 }
