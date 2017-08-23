@@ -5,6 +5,8 @@ import java.math.BigInteger;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.bouncycastle.util.encoders.Hex;
+
 public class RadixConverter {
 	
 	private final static BigInteger TWO = BigInteger.valueOf(2);
@@ -12,7 +14,7 @@ public class RadixConverter {
 	
 	public static String hexToDecimal(String hex){
 		hex.trim();
-		return hex.contains(".") ? toBigDecimal(hex).toString() : new BigInteger(hex).toString();
+		return hex.contains(".") ? toBigDecimal(hex).toString() : new BigInteger(hex, 16).toString();
 	}
 	
 	public static String hexToASCII(String hex){
@@ -23,6 +25,10 @@ public class RadixConverter {
 	        output.append((char)Integer.parseInt(str, 16));
 	    }
 	    return output.toString();
+	}
+	
+	public static String hexToASCII(byte[] hex){
+		return hexToASCII(Hex.toHexString(hex));
 	}
 	
 	public static byte[] hexToByteArray(String hex){

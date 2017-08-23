@@ -11,6 +11,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +20,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
@@ -182,8 +185,50 @@ public abstract class CertificateUtilities {
 	
 	public static String printExtension(X509Certificate cert, String extension){
 		return "Extension: " + extension + "\nDescription: "
-				+ Extensions.getExtensionDescription(extension) + "\nValue: " +
+				+ getExtensionDesc(extension) + "\nValue: " +
 				RadixConverter.binaryTextToHex(cert.getExtensionValue(extension));
+	}
+	
+	public static Map<String, String> getExtensionDescriptions(){
+		Map<String, String> extensions = new HashMap<>();
+		extensions.put(Extension.auditIdentity.getId(), "Audit Identity");
+		extensions.put(Extension.authorityInfoAccess.getId(), "Authority Info Access");
+		extensions.put(Extension.authorityKeyIdentifier.getId(), "Authority Key Identifier");
+		extensions.put(Extension.basicConstraints.getId(), "Basic Constraints");
+		extensions.put(Extension.biometricInfo.getId(), "Biometric Info");
+		extensions.put(Extension.certificateIssuer.getId(), "Certificate Issuer");
+		extensions.put(Extension.certificatePolicies.getId(), "Certificate Policies");
+		extensions.put(Extension.cRLDistributionPoints.getId(), "CRL Distribution Points");
+		extensions.put(Extension.cRLNumber.getId(), "CRL Number");
+		extensions.put(Extension.deltaCRLIndicator.getId(), "Delta CRL Indicator");
+		extensions.put(Extension.extendedKeyUsage.getId(), "Extended Key Usage");
+		extensions.put(Extension.freshestCRL.getId(), "Freshest CRL");
+		extensions.put(Extension.inhibitAnyPolicy.getId(), "Inhibit Any Policy");
+		extensions.put(Extension.instructionCode.getId(), "Instruction Code");
+		extensions.put(Extension.invalidityDate.getId(), "Invalidity Date");
+		extensions.put(Extension.issuerAlternativeName.getId(), "Issuer Alternative Name");
+		extensions.put(Extension.issuingDistributionPoint.getId(), "Issuing Distribution Point");
+		extensions.put(Extension.keyUsage.getId(), "Key Usage");
+		extensions.put(Extension.logoType.getId(), "Logo Type");
+		extensions.put(Extension.nameConstraints.getId(), "Name Constraints");
+		extensions.put(Extension.noRevAvail.getId(), "No Rev Avail");
+		extensions.put(Extension.policyConstraints.getId(), "Policy Constraints");
+		extensions.put(Extension.policyMappings.getId(), "Policy Mappings");
+		extensions.put(Extension.privateKeyUsagePeriod.getId(), "Private Key Usage Period");
+		extensions.put(Extension.qCStatements.getId(), "QC Statements");
+		extensions.put(Extension.reasonCode.getId(), "Reason Code");
+		extensions.put(Extension.reasonCode.getId(), "Reason Code");
+		extensions.put(Extension.subjectAlternativeName.getId(), "Subject Alternative Name");
+		extensions.put(Extension.subjectDirectoryAttributes.getId(), "Subject Directory Attributes");
+		extensions.put(Extension.subjectInfoAccess.getId(), "Subject Info Access");
+		extensions.put(Extension.subjectKeyIdentifier.getId(), "Subject Key Identifier");
+		extensions.put(Extension.targetInformation.getId(), "Target Information");
+		
+		return extensions;
+	}
+	
+	public static String getExtensionDesc(String oid){
+		return getExtensionDescriptions().get(oid);
 	}
 	
 	

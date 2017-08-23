@@ -18,6 +18,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
@@ -30,9 +31,7 @@ public class TrustListUtilFactory extends CertificateUtilities{
 		
 	public static void deleteSelectedItems(List<CertificateBean> all,
 			List<CertificateBean> selected) {
-		for (int i = selected.size() - 1; i >= 0; i--) {
-			all.remove(selected.get(i));
-		}
+		all.removeAll(selected);
 	}
 	
 	

@@ -257,8 +257,14 @@ public class CertificateBean extends ProviderAttribute {
 	public boolean equals(Object object) {
 		if (object instanceof CertificateBean) {
 			CertificateBean bean = (CertificateBean) object;
-			return bean.getParentCert().getSerialNumber().toString()
-					.equals(this.parentCert.getSerialNumber().toString());
+			boolean equal = false;
+			try {
+				equal = bean.getThumbprint().equals(this.getThumbprint());
+			} catch (CertificateEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return equal;
 		} else {
 			return false;
 		}
@@ -339,13 +345,14 @@ public class CertificateBean extends ProviderAttribute {
 	}
 	
 	public String printExtensions(){
-		String exts = "";
-		ArrayList<String> extensions = new ArrayList<String>(parentCert.getCriticalExtensionOIDs());
-		extensions.addAll(parentCert.getNonCriticalExtensionOIDs());
-		for(String ext : extensions){
-			exts += "\n" + CertificateUtilities.printExtension(parentCert, ext) + "\n";
+		String value = "";
+		try {
+			value = new ExtensionsBean(getParentCert()).toString();
+		} catch (CertificateEncodingException e) {
+			e.printStackTrace();
 		}
-		return exts;
+		
+		return value;
 	}
 	
 	public String getSignature(){
@@ -355,6 +362,10 @@ public class CertificateBean extends ProviderAttribute {
 	public String getParameters(){
 		return RadixConverter.binaryToASCII(
 				parentCert.getExtensionValue(Extension.authorityKeyIdentifier.getId()));
+	}
+	
+	public ExtensionsBean getExtensions() throws CertificateEncodingException{
+		return new ExtensionsBean(getParentCert());
 	}
 	
 	
