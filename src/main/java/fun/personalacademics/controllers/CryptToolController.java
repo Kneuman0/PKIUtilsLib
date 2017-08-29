@@ -29,12 +29,11 @@ import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.GetURLPopup;
 import fun.personalacademics.utils.CertificateEncapsulater;
 import fun.personalacademics.utils.CertificateEncapsulater.CERT_TYPES;
-import fun.personalacademics.utils.CertExts;
 import fun.personalacademics.utils.CertificateUtilities;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public abstract class CryptToolController extends ControllerUtils implements IPopupController, CertExts{
+public abstract class CryptToolController extends ControllerUtils implements IPopupController{
 	
 	@Override
 	public abstract void initialize();
