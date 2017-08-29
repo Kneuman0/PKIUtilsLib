@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertPath;
 import java.security.cert.CertPathValidator;
@@ -16,6 +17,7 @@ import java.security.cert.PKIXParameters;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest512;
@@ -24,12 +26,15 @@ import biz.ui.controller.utils.ControllerUtils;
 import biz.ui.controller.utils.IPopupController;
 import biz.ui.filesystem.FriendlyExtensionFilter;
 import fun.personalacademics.model.CertificateBean;
+import fun.personalacademics.popup.GetURLPopup;
 import fun.personalacademics.utils.CertificateEncapsulater;
 import fun.personalacademics.utils.CertificateEncapsulater.CERT_TYPES;
+import fun.personalacademics.utils.CertExts;
 import fun.personalacademics.utils.CertificateUtilities;
+import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public abstract class CryptToolController extends ControllerUtils implements IPopupController{
+public abstract class CryptToolController extends ControllerUtils implements IPopupController, CertExts{
 	
 	@Override
 	public abstract void initialize();
@@ -47,12 +52,33 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 	}
 	
 	protected List<File> getPEMLocations(){
-		return requestFiles("PEM Locations", null, getPemExtensionFilter());
+		return requestFiles("PEM Locations", null, CertificateUtilities.PEM_EXTS);
 	}
 	
 	protected File getPEMLocation(){
-		return requestFile("PEM Location", null, getPemExtensionFilter());
+		return requestFile("PEM Location", null, CertificateUtilities.PEM_EXTS);
 	}
+	
+	protected List<CertificateBean> getCertsFromURL(URL url) throws Exception {
+		return new CertificateEncapsulater(url).getEncapulatedCerts();
+	}
+	
+	protected List<CertificateBean> getCertsFromURL(){
+		List<CertificateBean> beans = new ArrayList<>();
+		GetURLPopup urlPop = new GetURLPopup();
+		Optional<ButtonType> result = urlPop.showAndWait();
+		if(result.isPresent() && result.get() == ButtonType.OK){
+			try {
+				beans.addAll(getCertsFromURL(urlPop.getURL()));
+			} catch (Exception e) {
+				displayErrorMessage("URL Error", "There was an error reading the URL", null, e);
+			}
+		}
+		
+		return beans;
+	}
+	
+	
 		
 	protected List<CertificateBean> listPEM(File pemLoc){
 		CertificateEncapsulater certEncap = null;
@@ -86,6 +112,34 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 		}
 		
 		return beans;
+	}
+	
+	public List<CertificateBean> encapsulateJavaKeyStores(List<File> keyStores) {
+		List<CertificateBean> beans = new ArrayList<>();
+		for(File ks : keyStores)
+			try {
+				beans.addAll(encapsulateJavaKeyStore(ks));
+			} catch (Exception e) {
+				displayErrorMessage("KeyStore Loading Error", "Error Loading KeyStore", null, e);
+			}
+		return beans;
+	}
+	
+	public List<CertificateBean> encapsulateJavaKeyStore(File keyStore) throws Exception{	
+		List<CertificateBean> beans = null;
+		try {
+			beans = new ArrayList<>(new CertificateEncapsulater(
+					keyStore, CERT_TYPES.DEFAULT_KEYSTORE).getEncapulatedCerts());
+		} catch (Exception e) {
+			displayErrorMessage("KeyStore Loading Error", "Error Loading KeyStore", null, e);
+		}
+		
+		return beans;
+	}
+	
+	public List<CertificateBean> importDefaultJavaKeyStores(){
+		List<File> files = requestFiles("All Files", null);
+		return encapsulateJavaKeyStores(files);
 	}
 	
 	public void exportCertsToPem(List<CertificateBean> certs, File location) {
@@ -181,33 +235,20 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 	}
 	
 	public File getBundleLocation(){
-		return requestFile("Bundle Location", null, getBundleExtensionFilter());
+		return requestFile("Bundle Location", null, CertificateUtilities.BUNDLE_EXTS);
 	}
 	
 	public List<File> getBundleLocations(){
-		return requestFiles("Bundle Locations", null, getBundleExtensionFilter());
+		return requestFiles("Bundle Locations", null, CertificateUtilities.BUNDLE_EXTS);
 	}
 	
 	public File getExportLocation(){
 		return requestDirectory("Export Location", null);
 	}
 	
-	public static List<ExtensionFilter> getBundleExtensionFilter(){
-		return new FriendlyExtensionFilter("Bundles", "*.p7b", "*.p7c").get();
-	}
+
 	
-	public static List<ExtensionFilter> getPemExtensionFilter(){
-		return new FriendlyExtensionFilter("PEM Files", "*.pem").get();
-	}
-	
-	public static List<ExtensionFilter> getX509CertsExtensionFilter(){
-		return new FriendlyExtensionFilter("X509 Certs", "*.cer", "*.der").get();
-	}
-	
-	public static List<ExtensionFilter> getAllCertFileExtensionFilters(){
-		return new FriendlyExtensionFilter("Cert Files", "*.p7b", "*.p7c", "*.pem",
-				"*.der", "*.p12", "*.pfx", "*.cer", "*.crt").get();
-	}
+//	public load
 	
 	
 

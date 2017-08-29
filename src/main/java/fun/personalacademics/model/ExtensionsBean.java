@@ -1,7 +1,5 @@
 package fun.personalacademics.model;
 
-
-import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -11,9 +9,12 @@ import java.util.List;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.PolicyMappings;
 import org.bouncycastle.asn1.x509.TBSCertificate;
 
 import fun.personalacademics.utils.CertificateUtilities;
@@ -38,6 +39,7 @@ public class ExtensionsBean {
 			try {
 				value += "\nValue: " + getExtenstionValue(id);
 			} catch (CertificateParsingException e) {
+				value += "\nError: " + e.getMessage();
 				System.err.println(e.getMessage());
 			}
 		}
@@ -48,6 +50,7 @@ public class ExtensionsBean {
 			try {
 				value += "\nValue: " + getExtenstionValue(id);
 			} catch (CertificateParsingException e) {
+				value += "\nError: " + e.getMessage();
 				System.err.println(e.getMessage());
 			}
 		}
@@ -62,6 +65,10 @@ public class ExtensionsBean {
 			value += getAuthorityInfoAccess().toString();	
 		}else if(oid.getId().equals(Extension.cRLDistributionPoints.getId())){
 			value += getCRLDistPoints().toString();
+		}else if(oid.getId().equals(Extension.policyMappings.getId())){
+			value += getPolicyMappings().toString();
+		}else if(oid.getId().equals(Extension.cRLNumber.getId())){
+			value += getCRLNumber().getCRLNumber().toString();
 		}else{
 			value += exts.getExtension(oid).getParsedValue().toString();
 		}
@@ -95,6 +102,44 @@ public class ExtensionsBean {
 		return crlPnt != null ? crlPnt : null;
 	}
 	
+	public BasicConstraints getBasicConstraints() throws CertificateParsingException{
+		BasicConstraints bc = null;
+		try {
+			bc = BasicConstraints.getInstance(exts.getExtension(Extension.basicConstraints));
+		} catch (Exception e) {
+			throw new CertificateParsingException(
+					"Either the Basic Constraints do not exist or could not be parsed"
+					+ " and/or Error:\n" + e.getMessage());
+		}
+		
+		return bc;
+	}
+	
+	public CRLNumber getCRLNumber() throws CertificateParsingException{
+		CRLNumber crlr = null;
+		try {
+			crlr = CRLNumber.getInstance(exts.getExtension(Extension.cRLNumber));
+		} catch (Exception e) {
+			throw new CertificateParsingException(
+					"Either the CRL Reason does not exist or could not be parsed"
+					+ " and/or Error:\n" + e.getMessage());
+		}
+		
+		return crlr;
+	}
+	
+	public PolicyMappings getPolicyMappings() throws CertificateParsingException{
+		PolicyMappings pm = null;
+		try {
+			pm = PolicyMappings.getInstance(exts.getExtension(Extension.policyMappings));
+		} catch (Exception e) {
+			throw new CertificateParsingException(
+					"Either the Policy Mappings do not exist or could not be parsed"
+					+ " and/or Error:\n" + e.getMessage());
+		}
+		
+		return pm;
+	}
 	
 	
 }

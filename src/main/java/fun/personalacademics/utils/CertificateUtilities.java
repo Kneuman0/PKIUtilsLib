@@ -12,6 +12,7 @@ import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,11 +28,27 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
+import biz.ui.filesystem.FriendlyExtensionFilter;
 import fun.personalacademics.model.CertificateBean;
+import javafx.stage.FileChooser.ExtensionFilter;
 import sun.misc.BASE64Encoder;
 
 @SuppressWarnings("restriction")
-public abstract class CertificateUtilities {
+public abstract class CertificateUtilities{
+	
+	
+	public static List<ExtensionFilter> BUNDLE_EXTS = 
+			new FriendlyExtensionFilter("Bundles", "*.p7b", "*.p7c").get();
+	
+	public static List<ExtensionFilter> PEM_EXTS = 
+			new FriendlyExtensionFilter("PEM Files", "*.pem").get();
+	
+	public static List<ExtensionFilter> X509_CERT_EXTS = 
+			new FriendlyExtensionFilter("X509 Certs", "*.cer", "*.der").get();
+	
+	public static List<ExtensionFilter> ALL_CERT_EXTS = 
+			new FriendlyExtensionFilter("Cert Files", "*.p7b", "*.p7c", "*.pem",
+			"*.der", "*.p12", "*.pfx", "*.cer", "*.crt").get();
 
 	
 	public static String generateX509SKI(X509Certificate cert) {

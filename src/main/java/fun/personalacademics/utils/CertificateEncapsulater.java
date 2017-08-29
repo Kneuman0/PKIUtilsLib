@@ -6,12 +6,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.PKIXParameters;
+import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -30,7 +34,7 @@ import javafx.scene.control.ButtonType;
 
 public class CertificateEncapsulater {
 	
-	public static enum CERT_TYPES {CER, DER, PEM, CRT, P7B, P7C, PFX, P12};
+	public static enum CERT_TYPES {CER, DER, PEM, CRT, P7B, P7C, PFX, P12, DEFAULT_KEYSTORE};
 	List<X509Certificate> certs;
 	
 	/**
@@ -56,6 +60,34 @@ public class CertificateEncapsulater {
 			loadPEMFile(certFile);
 		}else{
 			throw new Exception(certFile.getAbsolutePath() + "is not a supported file type");
+		}
+		
+		
+	}
+	
+	/**
+	 * Uses the file extension to determine the file type. Reads in the entire file and 
+	 * stores it as X509Certificates
+	 * @param certFile
+	 * @throws Exception 
+	 */
+	public CertificateEncapsulater(URL url) throws Exception {
+		certs = new ArrayList<>();
+		if(url.getPath().toLowerCase().endsWith("cer")){
+			loadCERURL(url);
+		}else if(url.getPath().toLowerCase().endsWith("pem")){
+			loadPEMURL(url);
+		}else if(url.getPath().toLowerCase().endsWith("p7b") ||
+				url.getPath().toLowerCase().endsWith("p7c")){
+			loadP7BURL(url);
+		}else if(url.getPath().toLowerCase().endsWith("pfx")){
+			loadPFXURL(url);
+		}else if(url.getPath().toLowerCase().endsWith("p12")){
+			loadP7BURL(url);
+		}else if(url.getPath().toLowerCase().endsWith("crt")){
+			loadPEMURL(url);
+		}else{
+			throw new Exception(url.getPath() + "is not a supported file type");
 		}
 		
 		
@@ -107,9 +139,97 @@ public class CertificateEncapsulater {
 			loadP7BFile(certFile);
 		}else if(ext == CERT_TYPES.DER){
 			loadCERFile(certFile);
+		}else if(ext == CERT_TYPES.DEFAULT_KEYSTORE){
+			addCertsFromDefaultJavaKeyStore(certFile, null);
 		}else {
 			// Must be type P7C
 			loadP7BFile(certFile);
+		}
+	}
+	
+	/**
+	 * Accepts a certificate file containing one or more certificates. Must specify the encoding type of the file. This
+	 * constructor is useful if the certificate file is encoded differently then what the extension indicates
+	 * @param certFile file containing one or more certificates
+	 * @param ext type of certificate encoding
+	 * @throws CertificateException
+	 * @throws IOException
+	 * @throws Base64DecodingException
+	 * @throws CMSException
+	 */
+	public CertificateEncapsulater(File certFile, CERT_TYPES ext, String password)throws Exception{
+		certs = new ArrayList<>();
+		if(ext == CERT_TYPES.CER){
+			loadCERFile(certFile);
+		}else if(ext == CERT_TYPES.PEM){
+			loadPEMFile(certFile);
+		}else if(ext == CERT_TYPES.PFX){
+			loadPFXFile(certFile);
+		}else if(ext == CERT_TYPES.CRT){
+			loadPEMFile(certFile);
+		}else if(ext == CERT_TYPES.P7B){
+			loadP7BFile(certFile);
+		}else if(ext == CERT_TYPES.DER){
+			loadCERFile(certFile);
+		}else if(ext == CERT_TYPES.DEFAULT_KEYSTORE){
+			addCertsFromDefaultJavaKeyStore(certFile, password);
+		}else {
+			// Must be type P7C
+			loadP7BFile(certFile);
+		}
+	}
+	
+	/**
+	 * Accepts a certificate file containing one or more certificates. Must specify the encoding type of the file. This
+	 * constructor is useful if the certificate file is encoded differently then what the extension indicates
+	 * @param certFile file containing one or more certificates
+	 * @param ext type of certificate encoding
+	 * @throws CertificateException
+	 * @throws IOException
+	 * @throws Base64DecodingException
+	 * @throws CMSException
+	 */
+	public CertificateEncapsulater(URL url, CERT_TYPES ext)throws Exception{
+		certs = new ArrayList<>();
+		if(ext == CERT_TYPES.CER){
+			loadCERURL(url);
+		}else if(ext == CERT_TYPES.PEM){
+			loadPEMURL(url);
+		}else if(ext == CERT_TYPES.PFX){
+			loadPFXURL(url);
+		}else if(ext == CERT_TYPES.CRT){
+			loadPEMURL(url);
+		}else if(ext == CERT_TYPES.P7B){
+			loadP7BURL(url);
+		}else if(ext == CERT_TYPES.DER){
+			loadCERURL(url);
+		}else if(ext == CERT_TYPES.DEFAULT_KEYSTORE){
+			addCertsFromDefaultJavaKeyStore(url, null);
+		}else {
+			// Must be type P7C
+			loadP7BURL(url);
+		}
+	}
+	
+	public CertificateEncapsulater(URL url, CERT_TYPES ext, String password)throws Exception{
+		certs = new ArrayList<>();
+		if(ext == CERT_TYPES.CER){
+			loadCERURL(url);
+		}else if(ext == CERT_TYPES.PEM){
+			loadPEMURL(url);
+		}else if(ext == CERT_TYPES.PFX){
+			loadPFXURL(url);
+		}else if(ext == CERT_TYPES.CRT){
+			loadPEMURL(url);
+		}else if(ext == CERT_TYPES.P7B){
+			loadP7BURL(url);
+		}else if(ext == CERT_TYPES.DER){
+			loadCERURL(url);
+		}else if(ext == CERT_TYPES.DEFAULT_KEYSTORE){
+			addCertsFromDefaultJavaKeyStore(url, password);
+		}else {
+			// Must be type P7C
+			loadP7BURL(url);
 		}
 	}
 	
@@ -124,6 +244,16 @@ public class CertificateEncapsulater {
 	}
 	
 	/**
+	 * Method for loading cer encoded certificate file
+	 * @param certFile file containing certificate
+	 * @throws CertificateException
+	 * @throws IOException
+	 */
+	private void loadCERURL(URL url) throws CertificateException, IOException{
+		addCertsFromURL("X.509", url);
+	}
+	
+	/**
 	 * Method for loading PEM certificate file. Certificates must be bounded at the 
 	 * beginning by -----BEGIN CERTIFICATE-----, and bounded at the end by -----END CERTIFICATE-----.
 	 * @param certFile
@@ -135,6 +265,17 @@ public class CertificateEncapsulater {
 	}
 	
 	/**
+	 * Method for loading PEM certificate file. Certificates must be bounded at the 
+	 * beginning by -----BEGIN CERTIFICATE-----, and bounded at the end by -----END CERTIFICATE-----.
+	 * @param certFile
+	 * @throws CertificateException
+	 * @throws IOException 
+	 */
+	private void loadPEMURL(URL url) throws CertificateException, IOException{
+		addCertsFromURL("X.509", url);
+	}
+	
+	/**
 	 * method for loading P7B file
 	 * @param certFile file containing P7B or P7C bundle
 	 * @throws CertificateException
@@ -143,6 +284,17 @@ public class CertificateEncapsulater {
 	 */
 	private void loadP7BFile(File certFile) throws CertificateException, IOException{
 		addCertsFromFile("X.509", certFile);
+	}
+	
+	/**
+	 * method for loading P7B file
+	 * @param certFile file containing P7B or P7C bundle
+	 * @throws CertificateException
+	 * @throws IOException
+	 * @throws Base64DecodingException
+	 */
+	private void loadP7BURL(URL url) throws CertificateException, IOException{
+		addCertsFromURL("X.509", url);
 	}
 	
 	/**
@@ -160,6 +312,25 @@ public class CertificateEncapsulater {
 		Optional<ButtonType> result = passwordPopup.showAndWait();
 		if(result.isPresent() && result.get() == ButtonType.OK){
 			getPasswordProtectedCerts(passwordPopup.getPassword(), certFile);
+		}
+		
+	}
+	
+	/**
+	 * Method for loading PFX file
+	 * @param certFile
+	 * @throws FileNotFoundException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws KeyStoreException 
+	 * @throws CertificateException
+	 * @throws IOException
+	 * @throws Base64DecodingException
+	 */
+	private void loadPFXURL(URL url) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException {
+		PasswordPopup passwordPopup = new PasswordPopup();
+		Optional<ButtonType> result = passwordPopup.showAndWait();
+		if(result.isPresent() && result.get() == ButtonType.OK){
+			getPasswordProtectedCerts(passwordPopup.getPassword(), url);
 		}
 		
 	}
@@ -255,6 +426,18 @@ public class CertificateEncapsulater {
  
 	}
 	
+	private void getPasswordProtectedCerts(String password, URL url) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException{
+        KeyStore p12 = KeyStore.getInstance("pkcs12");
+        p12.load(url.openStream(), password.toCharArray());
+        Enumeration<String> e = p12.aliases();
+        while (e.hasMoreElements()) {
+            String alias = (String) e.nextElement();
+            X509Certificate cert = (X509Certificate) p12.getCertificate(alias);
+            certs.add(cert);
+        }
+ 
+	}
+	
 	private void addCertsFromString(String instanceType, String certFile) throws CertificateException, IOException{
 		CertificateFactory factory = CertificateFactory.getInstance(instanceType);
 		@SuppressWarnings("unchecked")
@@ -285,6 +468,58 @@ public class CertificateEncapsulater {
 		return beans;
 	}
 	
+	public void addCertsFromDefaultJavaKeyStore(File location, String password) throws Exception{
+		 // Load the JDK's cacerts keystore file
+//        String filename = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
+        FileInputStream is = new FileInputStream(location);
+        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+        if(password== null || password.isEmpty()) password = "changeit";
+        keystore.load(is, password.toCharArray());
+
+        // This class retrieves the most-trusted CAs from the keystore
+        PKIXParameters params = new PKIXParameters(keystore);
+
+        // Get the set of trust anchors, which contain the most-trusted CA certificates
+        Iterator it = params.getTrustAnchors().iterator();
+        
+        while( it.hasNext() ) {
+            TrustAnchor ta = (TrustAnchor)it.next();
+            // Get certificate
+            certs.add(ta.getTrustedCert());
+        }
+	}
+	
+	public void addCertsFromDefaultJavaKeyStore(URL location, String password) throws Exception{
+       KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+       if(password == null || password.isEmpty()) password = "changeit";
+       keystore.load(location.openStream(), password.toCharArray());
+
+       // This class retrieves the most-trusted CAs from the keystore
+       PKIXParameters params = new PKIXParameters(keystore);
+
+       // Get the set of trust anchors, which contain the most-trusted CA certificates
+       Iterator it = params.getTrustAnchors().iterator();
+       
+       while( it.hasNext() ) {
+           TrustAnchor ta = (TrustAnchor)it.next();
+           // Get certificate
+           certs.add(ta.getTrustedCert());
+       }
+	}
+	
+	public void addCertsFromDefaultJavaKeyStore(String location, String password) throws Exception{
+		addCertsFromDefaultJavaKeyStore(new File(location), password);
+	}
+	
+	private void addCertsFromURL(String instanceType, URL url) throws CertificateException, IOException{
+		CertificateFactory factory = CertificateFactory.getInstance(instanceType);
+		Collection<? extends Certificate> col = 
+				(Collection<? extends Certificate>)factory.generateCertificates(url.openStream());
+		Iterator<? extends Certificate> itr = col.iterator();
+		while(itr.hasNext()){
+			certs.add((X509Certificate)itr.next());
+		}
+	}
 	
 
 }
