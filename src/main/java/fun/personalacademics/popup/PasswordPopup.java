@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 
+@SuppressWarnings("restriction")
 public class PasswordPopup extends Alert{
 	
 	private TextField passwordTextBox;

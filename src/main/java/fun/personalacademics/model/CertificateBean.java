@@ -1,14 +1,12 @@
 package fun.personalacademics.model;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,18 +14,14 @@ import java.util.Set;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.bouncycastle.asn1.ASN1OutputStream;
-import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.X509Extensions;
 
 import fun.personalacademics.utils.CertificateUtilities;
 import fun.personalacademics.utils.RadixConverter;
 import fun.personalacademics.model.ProviderAttribute;
 import javafx.beans.property.SimpleObjectProperty;
 
+@SuppressWarnings("restriction")
 public class CertificateBean extends ProviderAttribute {
 
 	private X509Certificate parentCert;

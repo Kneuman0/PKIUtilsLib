@@ -7,14 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertPath;
-import java.security.cert.CertPathValidator;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.PKIXCertPathValidatorResult;
-import java.security.cert.PKIXParameters;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +17,14 @@ import org.bouncycastle.jcajce.provider.digest.SHA3.Digest512;
 
 import biz.ui.controller.utils.ControllerUtils;
 import biz.ui.controller.utils.IPopupController;
-import biz.ui.filesystem.FriendlyExtensionFilter;
 import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.GetURLPopup;
 import fun.personalacademics.utils.CertificateEncapsulater;
 import fun.personalacademics.utils.CertificateEncapsulater.CERT_TYPES;
 import fun.personalacademics.utils.CertificateUtilities;
 import javafx.scene.control.ButtonType;
-import javafx.stage.FileChooser.ExtensionFilter;
 
+@SuppressWarnings("restriction")
 public abstract class CryptToolController extends ControllerUtils implements IPopupController{
 	
 	@Override
@@ -195,8 +187,8 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 		return certs;
 	}
 		
-	@SuppressWarnings("unchecked")
-	protected List<CertificateBean> getValidationPath(CertificateBean cert) throws CertificateException{
+//	@SuppressWarnings("unchecked")
+//	protected List<CertificateBean> getValidationPath(CertificateBean cert) throws CertificateException{
 //		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 //		List<X509Certificate> mylist = new ArrayList<X509Certificate>();          
 //		mylist.add(cert.getParentCert());
@@ -208,8 +200,8 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 //		PKIXCertPathValidatorResult pkixCertPathValidatorResult =
 //		      (PKIXCertPathValidatorResult) cpv.validate(cp, params);
 //		return CertificateEncapsulater.encapsulateCertificates((List<X509Certificate>)cp.getCertificates());
-		return null;
-	}
+//		return null;
+//	}
 		
 	protected List<CertificateBean> convertBase64IntoCert(String b64) throws Exception{
 		String correctPEM = CertificateUtilities.toPemFormat(b64);

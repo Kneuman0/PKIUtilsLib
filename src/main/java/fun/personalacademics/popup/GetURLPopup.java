@@ -1,7 +1,6 @@
 package fun.personalacademics.popup;
 
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 
 import java.net.MalformedURLException;
@@ -9,6 +8,7 @@ import java.net.URL;
 
 import javafx.scene.control.Alert;
 
+@SuppressWarnings("restriction")
 public class GetURLPopup extends Alert{
 	
 	private TextField urlTextBox;

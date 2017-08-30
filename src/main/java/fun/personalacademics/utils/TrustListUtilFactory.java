@@ -18,7 +18,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.DatatypeConverter;
@@ -27,6 +26,7 @@ import fun.personalacademics.model.CertificateBean;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+@SuppressWarnings("restriction")
 public class TrustListUtilFactory extends CertificateUtilities{
 		
 	public static void deleteSelectedItems(List<CertificateBean> all,

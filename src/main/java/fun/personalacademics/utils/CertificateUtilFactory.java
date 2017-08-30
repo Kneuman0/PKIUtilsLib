@@ -26,6 +26,7 @@ import fun.personalacademics.model.CertificateBean;
 import javafx.scene.control.TreeItem;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+@SuppressWarnings("restriction")
 public class CertificateUtilFactory extends CertificateUtilities{
 		
 	public List<CertificateBean> getSampleCerts() {

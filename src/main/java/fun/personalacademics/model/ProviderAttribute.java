@@ -2,6 +2,7 @@ package fun.personalacademics.model;
 
 import javafx.beans.property.SimpleObjectProperty;
 
+@SuppressWarnings("restriction")
 public abstract class ProviderAttribute {
 	
 		

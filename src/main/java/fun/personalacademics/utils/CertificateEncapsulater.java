@@ -6,8 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +32,7 @@ import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.PasswordPopup;
 import javafx.scene.control.ButtonType;
 
+@SuppressWarnings("restriction")
 public class CertificateEncapsulater {
 	
 	public static enum CERT_TYPES {CER, DER, PEM, CRT, P7B, P7C, PFX, P12, DEFAULT_KEYSTORE};
@@ -377,9 +378,9 @@ public class CertificateEncapsulater {
 		return temp;
 	}
 	
-	private void loadCERFile(String certFile) throws CertificateException, IOException{
-		addCertsFromString("X.509", certFile);
-	}
+//	private void loadCERFile(String certFile) throws CertificateException, IOException{
+//		addCertsFromString("X.509", certFile);
+//	}
 			
 	/**
 	 * Method for loading base 64 pem string. Certificate/s must be bounded at the 
@@ -400,9 +401,9 @@ public class CertificateEncapsulater {
 		}		
 	}
 	
-	private void loadP7BFile(String certFile) throws CertificateException, IOException{
-		addCertsFromString("X.509", certFile);
-	}
+//	private void loadP7BFile(String certFile) throws CertificateException, IOException{
+//		addCertsFromString("X.509", certFile);
+//	}
 	
 	private void addCertsFromFile(String instanceType, File certFile) throws CertificateException, IOException{
 		CertificateFactory factory = CertificateFactory.getInstance(instanceType);
@@ -438,17 +439,17 @@ public class CertificateEncapsulater {
  
 	}
 	
-	private void addCertsFromString(String instanceType, String certFile) throws CertificateException, IOException{
-		CertificateFactory factory = CertificateFactory.getInstance(instanceType);
-		@SuppressWarnings("unchecked")
-		Collection<? extends Certificate> col = 
-				(Collection<? extends Certificate>)factory.generateCertificate(
-						new ByteArrayInputStream(certFile.getBytes()));
-		Iterator<? extends Certificate> itr = col.iterator();
-		while(itr.hasNext()){
-			certs.add((X509Certificate)itr.next());
-		}
-	}
+//	private void addCertsFromString(String instanceType, String certFile) throws CertificateException, IOException{
+//		CertificateFactory factory = CertificateFactory.getInstance(instanceType);
+//		@SuppressWarnings("unchecked")
+//		Collection<? extends Certificate> col = 
+//				(Collection<? extends Certificate>)factory.generateCertificate(
+//						new ByteArrayInputStream(certFile.getBytes()));
+//		Iterator<? extends Certificate> itr = col.iterator();
+//		while(itr.hasNext()){
+//			certs.add((X509Certificate)itr.next());
+//		}
+//	}
 	
 	private void addCertFromPEMString(String base64) throws CertificateException{
 		CertificateFactory factory = CertificateFactory.getInstance("X.509");
@@ -469,42 +470,31 @@ public class CertificateEncapsulater {
 	}
 	
 	public void addCertsFromDefaultJavaKeyStore(File location, String password) throws Exception{
-		 // Load the JDK's cacerts keystore file
-//        String filename = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
-        FileInputStream is = new FileInputStream(location);
-        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        if(password== null || password.isEmpty()) password = "changeit";
-        keystore.load(is, password.toCharArray());
+//		Load the JDK's cacerts keystore file
+//		String filename = System.getProperty("java.home") + "/lib/security/cacerts".replace('/', File.separatorChar);
+		addCertsFromDefaultJavaKeyStore(new FileInputStream(location), password);
+	}
+	
+	public void addCertsFromDefaultJavaKeyStore(InputStream is, String password) throws Exception{
+		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+	       if(password == null || password.isEmpty()) password = "changeit";
+	       keystore.load(is, password.toCharArray());
 
-        // This class retrieves the most-trusted CAs from the keystore
-        PKIXParameters params = new PKIXParameters(keystore);
+	       // This class retrieves the most-trusted CAs from the keystore
+	       PKIXParameters params = new PKIXParameters(keystore);
 
-        // Get the set of trust anchors, which contain the most-trusted CA certificates
-        Iterator it = params.getTrustAnchors().iterator();
-        
-        while( it.hasNext() ) {
-            TrustAnchor ta = (TrustAnchor)it.next();
-            // Get certificate
-            certs.add(ta.getTrustedCert());
-        }
+	       // Get the set of trust anchors, which contain the most-trusted CA certificates
+	       Iterator<TrustAnchor> it = params.getTrustAnchors().iterator();
+	       
+	       while( it.hasNext() ) {
+	           TrustAnchor ta = it.next();
+	           // Get certificate
+	           certs.add(ta.getTrustedCert());
+	       }
 	}
 	
 	public void addCertsFromDefaultJavaKeyStore(URL location, String password) throws Exception{
-       KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-       if(password == null || password.isEmpty()) password = "changeit";
-       keystore.load(location.openStream(), password.toCharArray());
-
-       // This class retrieves the most-trusted CAs from the keystore
-       PKIXParameters params = new PKIXParameters(keystore);
-
-       // Get the set of trust anchors, which contain the most-trusted CA certificates
-       Iterator it = params.getTrustAnchors().iterator();
-       
-       while( it.hasNext() ) {
-           TrustAnchor ta = (TrustAnchor)it.next();
-           // Get certificate
-           certs.add(ta.getTrustedCert());
-       }
+       addCertsFromDefaultJavaKeyStore(location.openStream(), password);
 	}
 	
 	public void addCertsFromDefaultJavaKeyStore(String location, String password) throws Exception{
