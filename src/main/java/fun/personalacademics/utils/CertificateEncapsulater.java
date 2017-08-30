@@ -479,10 +479,9 @@ public class CertificateEncapsulater {
 		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
 	       if(password == null || password.isEmpty()) password = "changeit";
 	       keystore.load(is, password.toCharArray());
-
+	       printKeyStore(keystore);
 	       // This class retrieves the most-trusted CAs from the keystore
 	       PKIXParameters params = new PKIXParameters(keystore);
-
 	       // Get the set of trust anchors, which contain the most-trusted CA certificates
 	       Iterator<TrustAnchor> it = params.getTrustAnchors().iterator();
 	       
@@ -495,6 +494,20 @@ public class CertificateEncapsulater {
 	
 	public void addCertsFromDefaultJavaKeyStore(URL location, String password) throws Exception{
        addCertsFromDefaultJavaKeyStore(location.openStream(), password);
+	}
+	
+	public void printKeyStore(KeyStore ks){
+		try {
+			Enumeration<String> en = ks.aliases();
+			while(en.hasMoreElements()){
+				String alias = en.nextElement();
+				System.out.println("Alias Name: " + alias);
+				System.out.println("Cert: " + ks.getCertificate(alias));
+			}
+		} catch (KeyStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void addCertsFromDefaultJavaKeyStore(String location, String password) throws Exception{

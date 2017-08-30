@@ -9,6 +9,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -246,6 +247,15 @@ public abstract class CertificateUtilities{
 	
 	public static String getExtensionDesc(String oid){
 		return getExtensionDescriptions().get(oid);
+	}
+	
+	public static List<X509Certificate> asX509Certificates(List<CertificateBean> beans){
+		List<X509Certificate> certs = new ArrayList<>();
+		for(CertificateBean bean : beans){
+			certs.add(bean.getParentCert());
+		}
+		
+		return certs;
 	}
 	
 	

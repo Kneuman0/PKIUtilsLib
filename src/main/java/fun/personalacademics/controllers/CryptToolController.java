@@ -6,14 +6,23 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaCertStore;
+import org.bouncycastle.cms.CMSProcessableByteArray;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest512;
+import org.bouncycastle.util.Store;
 
 import biz.ui.controller.utils.ControllerUtils;
 import biz.ui.controller.utils.IPopupController;
@@ -21,6 +30,7 @@ import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.GetURLPopup;
 import fun.personalacademics.utils.CertificateEncapsulater;
 import fun.personalacademics.utils.CertificateEncapsulater.CERT_TYPES;
+import fun.personalacademics.utils.CertificateUtilFactory;
 import fun.personalacademics.utils.CertificateUtilities;
 import javafx.scene.control.ButtonType;
 
@@ -237,9 +247,35 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 		return requestDirectory("Export Location", null);
 	}
 	
+	//Export a certificate list to PKCS#7
+	public static byte[] exportCertificatesAsPkcs7(List<X509Certificate> certs) throws Exception {
 
+	    List<X509CertificateHolder> certList = new ArrayList<>();
+	    for (X509Certificate certificate: certs){
+	        certList.add(new X509CertificateHolder(certificate.getEncoded()));
+	    }
+	    Store certStore = new JcaCertStore(certList);
+
+	    CMSProcessableByteArray msg = new CMSProcessableByteArray("Signature".getBytes());
+	    CMSSignedDataGenerator    gen = new CMSSignedDataGenerator(); 
+	    gen.addCertificates(certStore);
+	    CMSSignedData data = gen.generate(msg, true); 
+	    return data.getEncoded();
+	}
 	
-//	public load
+
+	protected void exportToPKCS7File(List<CertificateBean> beans, File location) throws Exception{
+		byte[] pkcs7 = exportCertificatesAsPkcs7(
+				CertificateUtilities.asX509Certificates(beans));
+		FileOutputStream fos = new FileOutputStream(location);
+		fos.write(pkcs7);
+		fos.close();
+	}
+	
+	protected void saveCertsToPKCS7File(List<CertificateBean> beans) throws Exception{
+		File file = requestSave("Save To PKCS7 Bundle", "Bundle.p7b");
+		exportToPKCS7File(beans, file);
+	}
 	
 	
 
