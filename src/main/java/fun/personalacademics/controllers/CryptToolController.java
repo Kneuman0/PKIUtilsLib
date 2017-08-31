@@ -6,8 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -30,7 +28,6 @@ import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.GetURLPopup;
 import fun.personalacademics.utils.CertificateEncapsulater;
 import fun.personalacademics.utils.CertificateEncapsulater.CERT_TYPES;
-import fun.personalacademics.utils.CertificateUtilFactory;
 import fun.personalacademics.utils.CertificateUtilities;
 import javafx.scene.control.ButtonType;
 
@@ -248,7 +245,7 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 	}
 	
 	//Export a certificate list to PKCS#7
-	public static byte[] exportCertificatesAsPkcs7(List<X509Certificate> certs) throws Exception {
+	public static byte[] asPkcs7(List<X509Certificate> certs) throws Exception {
 
 	    List<X509CertificateHolder> certList = new ArrayList<>();
 	    for (X509Certificate certificate: certs){
@@ -265,8 +262,7 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 	
 
 	protected void exportToPKCS7File(List<CertificateBean> beans, File location) throws Exception{
-		byte[] pkcs7 = exportCertificatesAsPkcs7(
-				CertificateUtilities.asX509Certificates(beans));
+		byte[] pkcs7 = asPkcs7(CertificateUtilities.asX509Certificates(beans));
 		FileOutputStream fos = new FileOutputStream(location);
 		fos.write(pkcs7);
 		fos.close();
