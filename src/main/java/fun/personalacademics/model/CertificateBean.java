@@ -1,6 +1,7 @@
 package fun.personalacademics.model;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -12,32 +13,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.tools.SimpleJavaFileObject;
 import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.asn1.x509.Extension;
 
+import com.zeva.tlGen.dataModel.ProviderAttribute;
+
 import fun.personalacademics.utils.CertificateUtilities;
 import fun.personalacademics.utils.RadixConverter;
-import fun.personalacademics.model.ProviderAttribute;
 import javafx.beans.property.SimpleObjectProperty;
 
 @SuppressWarnings("restriction")
-public class CertificateBean extends ProviderAttribute {
+public class CertificateBean extends ProviderAttribute implements ICertificateBean{
 
-	private X509Certificate parentCert;
-	private SimpleObjectProperty<CertificateBean> name;
-	private String stringName;
-	private List<CertificateBean> childrenCerts;
-	private ProviderAttributeType type;
+	protected X509Certificate parentCert;
+	protected SimpleObjectProperty<CertificateBean> name;
+	protected String stringName;
+	protected List<CertificateBean> childrenCerts;
+	protected ProviderAttributeType type;
+	
 
 	public CertificateBean() {
-		this.type = ProviderAttributeType.CERTIFICATE_BEAN;
 		childrenCerts = new ArrayList<>();
 		name = new SimpleObjectProperty<CertificateBean>(this);
 		stringName = "Empty";
 	}
 
-	public CertificateBean(byte[] binary) throws CertificateException {
+	public CertificateBean(byte[] binary) throws CertificateException{
 		CertificateFactory fact = CertificateFactory.getInstance("X.509");
 		ByteArrayInputStream input = new ByteArrayInputStream(binary);
 		parentCert = (X509Certificate) fact.generateCertificate(input);
@@ -69,7 +72,7 @@ public class CertificateBean extends ProviderAttribute {
 		this.name = new SimpleObjectProperty<CertificateBean>(this);
 	}
 
-	public CertificateBean(X509Certificate parent, List<X509Certificate> children) {
+	public CertificateBean(X509Certificate parent, List<X509Certificate> children) throws CertificateEncodingException{
 		this.type = ProviderAttributeType.CERTIFICATE_BEAN;
 		this.name = new SimpleObjectProperty<CertificateBean>(this);
 		childrenCerts = new ArrayList<>();
@@ -158,9 +161,6 @@ public class CertificateBean extends ProviderAttribute {
 		this.name = new SimpleObjectProperty<CertificateBean>(name);
 	}
 
-	public SimpleObjectProperty<ProviderAttribute> nameProperty() {
-		return new SimpleObjectProperty<ProviderAttribute>(this);
-	}
 
 	/**
 	 * @param type
@@ -243,50 +243,7 @@ public class CertificateBean extends ProviderAttribute {
 		this.stringName = stringName;
 	}
 
-	/**
-	 * Checks if the two object are equal by getting the parent certificates and
-	 * comparing their serial numbers
-	 */
-	@Override
-	public boolean equals(Object object) {
-		if (object instanceof CertificateBean) {
-			CertificateBean bean = (CertificateBean) object;
-			boolean equal = false;
-			try {
-				equal = bean.getThumbprint().equals(this.getThumbprint());
-			} catch (CertificateEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return equal;
-		} else {
-			return false;
-		}
-
-	}
-
-	@Override
-	public ProviderAttributeType getType() {
-
-		return type;
-	}
-
-	/**
-	 * Use of this method assumed a check has been placed using the getType()
-	 * first to determine the Type of this subclass
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public CertificateBean getEncapsulatedBean() {
-
-		return this;
-	}
-
-	@Override
-	public ProviderAttribute initialize() {
-		// deliberately empty method
-		return this;
-	}
+	
 
 	public ArrayList<String> getKeyUsages() {
 		ArrayList<String> keyUsages = new ArrayList<>();
@@ -340,11 +297,13 @@ public class CertificateBean extends ProviderAttribute {
 	
 	public String printExtensions(){
 		String value = "";
-		try {
-			value = new ExtensionsBean(getParentCert()).toString();
-		} catch (CertificateEncodingException e) {
-			e.printStackTrace();
-		}
+			try {
+				value = new ExtensionsBean(getParentCert()).toString();
+			} catch (IOException | CertificateEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 		
 		return value;
 	}
@@ -358,12 +317,40 @@ public class CertificateBean extends ProviderAttribute {
 				parentCert.getExtensionValue(Extension.authorityKeyIdentifier.getId()));
 	}
 	
-	public ExtensionsBean getExtensions() throws CertificateEncodingException{
+	public ExtensionsBean getExtensions() throws CertificateEncodingException, IOException{
 		return new ExtensionsBean(getParentCert());
 	}
-	
-	
-	
-	
+
+	@Override
+	public ProviderAttributeType getType() {
+
+		return type;
+	}
+
+	/**
+	 * Use of this method assumed a check has been placed using the getType()
+	 * first to determine the Type of this subclass
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public CertificateBean getEncapsulatedBean() {
+
+		return this;
+	}
+
+
+	@Override
+	public ProviderAttribute initialize() {
+		// deliberately empty method
+		return this;
+	}
+
+	@Override
+	public SimpleObjectProperty<ProviderAttribute> nameProperty() {
+		// TODO Auto-generated method stub
+		return new SimpleObjectProperty<ProviderAttribute>(this);
+	}
+
+
 
 }
