@@ -28,15 +28,15 @@ public abstract class TrustListParsingController extends CryptToolController{
 	@Override
 	public abstract void initialize();
 
-	protected TrustStatusListType getEncapsulateTrustList(File tl) throws JAXBException, XMLParseException{
+	protected TrustStatusListType getEncapsulatedTrustList(File tl) throws JAXBException, XMLParseException{
 		XMLTrustListUnmarshaller um = new JAXBTrustListUnmarshallerV5(tl);
 		return um.getTrustList();
 	}
 	
-	protected List<TrustStatusListType> getEncapsulateTrustLists(List<File> files) throws JAXBException, XMLParseException{
+	protected List<TrustStatusListType> getEncapsulatedTrustLists(List<File> files) throws JAXBException, XMLParseException{
 		List<TrustStatusListType> tls = new ArrayList<>();
 		for(File file : files){
-			tls.add(getEncapsulateTrustList(file));
+			tls.add(getEncapsulatedTrustList(file));
 		}
 		return tls;
 	}
@@ -71,7 +71,7 @@ public abstract class TrustListParsingController extends CryptToolController{
 	protected List<CertificateBean> getCertsFromTrustList() throws JAXBException, XMLParseException{
 		List<File> tls = requestFiles("Import Trust List Certs", 
 				null, new FriendlyExtensionFilter("XML File", "*.xml").get());
-		return extractCertsFromTrustLists(getEncapsulateTrustLists(tls));
+		return extractCertsFromTrustLists(getEncapsulatedTrustLists(tls));
 		
 	}
 	
