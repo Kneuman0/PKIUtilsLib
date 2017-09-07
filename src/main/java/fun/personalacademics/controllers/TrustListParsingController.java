@@ -41,7 +41,7 @@ public abstract class TrustListParsingController extends CryptToolController{
 		return tls;
 	}
 	
-	protected TrustStatusListType getEncapsulateTrustList(InputStream tl) throws JAXBException, XMLParseException{
+	protected TrustStatusListType getEncapsulatedTrustList(InputStream tl) throws JAXBException, XMLParseException{
 		XMLTrustListUnmarshaller um = new JAXBTrustListUnmarshallerV5(tl);
 		return um.getTrustList();
 	}
@@ -75,11 +75,12 @@ public abstract class TrustListParsingController extends CryptToolController{
 		
 	}
 	
-	protected List<CertificateBean> getCertsFromTrustListURL() throws MalformedURLException, JAXBException, XMLParseException, IOException{
+	protected List<CertificateBean> getCertsFromTrustListURL() throws MalformedURLException,
+												JAXBException, XMLParseException, IOException{
 		GetURLPopup url = new GetURLPopup();
 		Optional<ButtonType> types = url.showAndWait();
 		if(types.isPresent() && types.get() == ButtonType.OK){
-			return extractCertsFromTrustList(getEncapsulateTrustList(url.getURL().openStream()));
+			return extractCertsFromTrustList(getEncapsulatedTrustList(url.getURL().openStream()));
 		}else{
 			return null;
 		}
