@@ -67,11 +67,13 @@
 			<artifactId>bcpkix-jdk15on</artifactId>
 			<version>1.50</version>
 		</dependency>
+		<!-- Below can be found @ https://github.com/Kneuman0/GUIUtils.git -->
 		<dependency>
 			<groupId>GUIUtils</groupId>
 			<artifactId>GUIUtils</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<!-- Below can be found @ https://github.com/Kneuman0/TrustListDataModelLib.git -->
 		<dependency>
 			<groupId>TrustListDataModelLib</groupId>
 			<artifactId>TrustListDataModelLib</artifactId>
