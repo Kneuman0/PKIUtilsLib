@@ -23,6 +23,7 @@ import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.GetURLPopup;
 import javafx.scene.control.ButtonType;
 
+@SuppressWarnings("restriction")
 public abstract class TrustListParsingController extends CryptToolController{
 
 	@Override
@@ -64,7 +65,7 @@ public abstract class TrustListParsingController extends CryptToolController{
 		for(TrustStatusListType tl : tls){
 			beans.addAll(extractCertsFromTrustList(tl));
 		}
-		System.out.println(beans);
+
 		return beans;
 	}
 	
