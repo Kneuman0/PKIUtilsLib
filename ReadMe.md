@@ -1,4 +1,6 @@
-# PKI Utils Tool
+# PKI Utils library
+
+This library is used as the backend behind the PKIUtilsTool application
 
 Temporary ReadMe
 
