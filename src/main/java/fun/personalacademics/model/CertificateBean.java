@@ -21,6 +21,7 @@ import org.bouncycastle.asn1.x509.Extension;
 import com.zeva.tlGen.dataModel.ProviderAttribute;
 
 import fun.personalacademics.utils.CertificateUtilities;
+import fun.personalacademics.utils.ROCABrokenKeyTest;
 import fun.personalacademics.utils.RadixConverter;
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -215,6 +216,7 @@ public class CertificateBean extends ProviderAttribute implements ICertificateBe
 		try {
 			builder.append("\nExtended Key Usages: " + parentCert.getExtendedKeyUsage());
 			builder.append("\n\nX509SKI: " + getX509SKI());
+			builder.append("\nIs Compromised: " + isROCACompromised());
 			builder.append("\nThumbprint: " + getThumbprint());
 			builder.append("\n\nBase64Encoded: " + DatatypeConverter.printBase64Binary(parentCert.getEncoded()));
 		} catch (CertificateParsingException e) {
@@ -310,6 +312,10 @@ public class CertificateBean extends ProviderAttribute implements ICertificateBe
 	
 	public String getSignature(){
 		return RadixConverter.binaryTextToHex(parentCert.getSignature());
+	}
+	
+	public boolean isROCACompromised(){
+		return ROCABrokenKeyTest.isAffected(getParentCert());
 	}
 	
 	public String getParameters(){
