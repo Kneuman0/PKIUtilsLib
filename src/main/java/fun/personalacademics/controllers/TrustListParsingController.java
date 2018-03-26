@@ -15,8 +15,8 @@ import javax.xml.bind.JAXBException;
 import com.zeva.temp.jaxb.datamodel.TSPServiceType;
 import com.zeva.temp.jaxb.datamodel.TSPType;
 import com.zeva.temp.jaxb.datamodel.TrustStatusListType;
-import com.zeva.tlGen.utils.xml.JAXBTrustListUnmarshallerV5;
-import com.zeva.tlGen.utils.xml.XMLTrustListUnmarshaller;
+import com.zeva.tlgen.utils.xml.JAXBTrustListUnmarshallerV5;
+import com.zeva.tlgen.utils.xml.XMLTrustListUnmarshaller;
 
 import biz.ui.filesystem.FriendlyExtensionFilter;
 import fun.personalacademics.model.CertificateBean;

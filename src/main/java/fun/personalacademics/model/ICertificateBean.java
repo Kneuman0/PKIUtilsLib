@@ -6,7 +6,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zeva.tlGen.dataModel.ProviderAttribute;
+import com.zeva.tlgen.dataModel.ProviderAttribute;
 
 import javafx.beans.property.SimpleObjectProperty;
 

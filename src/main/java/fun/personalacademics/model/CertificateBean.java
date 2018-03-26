@@ -13,19 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.tools.SimpleJavaFileObject;
 import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.asn1.x509.Extension;
 
-import com.zeva.tlGen.dataModel.ProviderAttribute;
+import com.zeva.tlgen.dataModel.ProviderAttribute;
 
 import fun.personalacademics.utils.CertificateUtilities;
 import fun.personalacademics.utils.ROCABrokenKeyTest;
 import fun.personalacademics.utils.RadixConverter;
 import javafx.beans.property.SimpleObjectProperty;
 
-@SuppressWarnings("restriction")
 public class CertificateBean extends ProviderAttribute implements ICertificateBean{
 
 	protected X509Certificate parentCert;
@@ -252,35 +250,39 @@ public class CertificateBean extends ProviderAttribute implements ICertificateBe
 		boolean[] parentKeyUsage = parentCert.getKeyUsage();
 
 		if (parentKeyUsage[0]) {
-			keyUsages.add("CERT_SIGN");
+			keyUsages.add("Digital Signature");
 		}
 
 		if (parentKeyUsage[1]) {
-			keyUsages.add("CRL_SIGN");
+			keyUsages.add("Non-Repudiation");
 		}
 
 		if (parentKeyUsage[2]) {
-			keyUsages.add("DATA_ENCIPHERMENT");
+			keyUsages.add("Key Encipherment");
 		}
 
 		if (parentKeyUsage[3]) {
-			keyUsages.add("DIGITAL_SIGNATURE");
+			keyUsages.add("Data Encipherment");
 		}
 
 		if (parentKeyUsage[4]) {
-			keyUsages.add("GOVT_APPROVED");
+			keyUsages.add("Key Agreement");
 		}
 
 		if (parentKeyUsage[5]) {
-			keyUsages.add("KEY_AGREEMENT");
+			keyUsages.add("Key Cert Sign");
 		}
 
 		if (parentKeyUsage[6]) {
-			keyUsages.add("KEY_ENCIPHERMENT");
+			keyUsages.add("CRL Sign");
 		}
 
 		if (parentKeyUsage[7]) {
-			keyUsages.add("NON_REPUDIATION");
+			keyUsages.add("Encipher Only");
+		}
+		
+		if (parentKeyUsage[8]) {
+			keyUsages.add("Decipher Only");
 		}
 
 		return keyUsages;

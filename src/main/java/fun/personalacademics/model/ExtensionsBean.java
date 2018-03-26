@@ -14,6 +14,7 @@ import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.PolicyMappings;
 import org.bouncycastle.cert.X509CertificateHolder;
 
@@ -34,12 +35,14 @@ public class ExtensionsBean extends X509CertificateHolder{
 		value += "----Critical Extensions----";
 		for(ASN1ObjectIdentifier id : getExtensions().getCriticalExtensionOIDs()){
 			value += "\nOID: " + id.getId() + "=:: " + CertificateUtilities.getExtensionDesc(id.getId());
+
 			try {
 				value += "\nValue: " + getExtenstionValue(id);
 			} catch (CertificateParsingException e) {
-				value += "\nError: " + e.getMessage();
-				System.err.println(e.getMessage());
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+
 		}
 		value += "\n----Critical Extensions----\n";
 		value += "\n----Non-Critical Extensions----";
@@ -66,6 +69,10 @@ public class ExtensionsBean extends X509CertificateHolder{
 		}else if(oid.getId().equals(Extension.policyMappings.getId())){
 			value += getPolicyMappings().toString();
 		}else if(oid.getId().equals(Extension.cRLNumber.getId())){
+			value += getCRLNumber().getCRLNumber().toString();
+		}else if(oid.getId().equals(Extension.keyUsage.getId())){
+			value += getKeyUsage().toString();
+		}else if(oid.getId().equals(Extension.basicConstraints.getId())){
 			value += getCRLNumber().getCRLNumber().toString();
 		}else{
 			value += getExtensions().getExtension(oid).getParsedValue().toString();
@@ -139,5 +146,19 @@ public class ExtensionsBean extends X509CertificateHolder{
 		return pm;
 	}
 	
+	public List<String> getKeyUsage() throws CertificateParsingException{
+		List<String> keyUsage = null;
+		try {
+			keyUsage = new CertificateBean(super.getEncoded()).getKeyUsages();
+		} catch (Exception e) {
+			throw new CertificateParsingException(
+					"Either the Key Usage do not exist or could not be parsed"
+					+ " and/or Error:\n" + e.getMessage());
+		}
+		
+		return keyUsage;
+	}
+	
+
 	
 }
