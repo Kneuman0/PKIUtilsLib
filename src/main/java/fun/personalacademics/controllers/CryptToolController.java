@@ -1,17 +1,25 @@
 package fun.personalacademics.controllers;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -21,6 +29,7 @@ import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.jcajce.provider.digest.SHA3.Digest512;
 import org.bouncycastle.util.Store;
+import org.bouncycastle.util.encoders.Hex;
 
 import biz.ui.controller.utils.ControllerUtils;
 import biz.ui.controller.utils.IPopupController;
@@ -29,6 +38,7 @@ import fun.personalacademics.popup.GetURLPopup;
 import fun.personalacademics.utils.CertificateEncapsulater;
 import fun.personalacademics.utils.CertificateEncapsulater.CERT_TYPES;
 import fun.personalacademics.utils.CertificateUtilities;
+import fun.personalacademics.utils.RadixConverter;
 import javafx.scene.control.ButtonType;
 
 @SuppressWarnings("restriction")
@@ -271,6 +281,38 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 	protected void saveCertsToPKCS7File(List<CertificateBean> beans) throws Exception{
 		File file = requestSave("Save To PKCS7 Bundle", "Bundle.p7b");
 		exportToPKCS7File(beans, file);
+	}
+	
+	protected String checkSumFile(File file, String alg) throws Exception{
+	       InputStream fis =  new FileInputStream(file);
+
+	       byte[] buffer = new byte[1024];
+	       MessageDigest complete = MessageDigest.getInstance(alg);
+	       int numRead;
+
+	       do {
+	           numRead = fis.read(buffer);
+	           if (numRead > 0) {
+	               complete.update(buffer, 0, numRead);
+	           }
+	       } while (numRead != -1);
+
+	       fis.close();
+	       return DatatypeConverter.printHexBinary(complete.digest());
+	}
+	
+	protected String convertTemp(byte[] hash) {
+	       String result = "";
+
+	       for (int i=0; i < hash.length; i++) {
+	           result += Integer.toString( ( hash[i] & 0xff ) + 0x100, 16).substring( 1 );
+	       }
+	       return result;
+	}
+	
+	protected boolean checksumIsValid(File file, String alg, String checksum) throws Exception {
+		String foundValue = checkSumFile(file, alg);
+		return foundValue.toLowerCase().equals(checksum.toLowerCase());
 	}
 	
 	
