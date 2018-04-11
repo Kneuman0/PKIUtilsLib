@@ -246,7 +246,11 @@ public abstract class CertificateUtilities{
 	}
 	
 	public static String getExtensionDesc(String oid){
-		return getExtensionDescriptions().get(oid);
+		try {
+			return getExtensionDescriptions().get(oid);
+		} catch (Exception e) {
+			return "Unknow Extension: + oid";
+		}
 	}
 	
 	public static List<X509Certificate> asX509Certificates(List<CertificateBean> beans){

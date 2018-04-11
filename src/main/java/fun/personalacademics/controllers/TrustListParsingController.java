@@ -1,6 +1,7 @@
 package fun.personalacademics.controllers;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -19,6 +20,7 @@ import com.zeva.tlgen.utils.xml.JAXBTrustListUnmarshallerV5;
 import com.zeva.tlgen.utils.xml.XMLTrustListUnmarshaller;
 
 import biz.ui.filesystem.FriendlyExtensionFilter;
+import fun.personalacademics.model.AATLParser;
 import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.GetURLPopup;
 import javafx.scene.control.ButtonType;
@@ -85,5 +87,9 @@ public abstract class TrustListParsingController extends CryptToolController{
 		}else{
 			return null;
 		}
+	}
+	
+	protected List<CertificateBean> extractCertsFromAATLXML(File xml) throws FileNotFoundException{
+		return new AATLParser(xml).getCerts();
 	}
 }

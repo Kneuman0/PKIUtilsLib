@@ -40,7 +40,7 @@ public class ExtensionsBean extends X509CertificateHolder{
 				value += "\nValue: " + getExtenstionValue(id);
 			} catch (CertificateParsingException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println("Error Parsing Extension OID: " + id.getId());
 			}
 
 		}
@@ -73,9 +73,18 @@ public class ExtensionsBean extends X509CertificateHolder{
 		}else if(oid.getId().equals(Extension.keyUsage.getId())){
 			value += getKeyUsage().toString();
 		}else if(oid.getId().equals(Extension.basicConstraints.getId())){
-			value += getCRLNumber().getCRLNumber().toString();
+			try {
+				value += getBasicConstraints().toString();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else{
-			value += getExtensions().getExtension(oid).getParsedValue().toString();
+			try {
+				value += getExtensions().getExtension(oid).getParsedValue().toString();
+			} catch (Exception e) {
+				value += "Unknown Extension: " + oid.toString();
+			}
 		}
 		
 		return value;

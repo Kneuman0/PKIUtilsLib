@@ -300,21 +300,12 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 	       fis.close();
 	       return DatatypeConverter.printHexBinary(complete.digest());
 	}
-	
-	protected String convertTemp(byte[] hash) {
-	       String result = "";
 
-	       for (int i=0; i < hash.length; i++) {
-	           result += Integer.toString( ( hash[i] & 0xff ) + 0x100, 16).substring( 1 );
-	       }
-	       return result;
-	}
 	
 	protected boolean checksumIsValid(File file, String alg, String checksum) throws Exception {
 		String foundValue = checkSumFile(file, alg);
-		return foundValue.toLowerCase().equals(checksum.toLowerCase());
+		return foundValue.toLowerCase().equals(checksum.toLowerCase().trim());
 	}
-	
 	
 
 }
