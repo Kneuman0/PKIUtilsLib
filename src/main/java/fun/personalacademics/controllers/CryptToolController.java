@@ -250,7 +250,7 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 		return requestFiles("Bundle Locations", null, CertificateUtilities.BUNDLE_EXTS);
 	}
 	
-	public File getExportLocation(){
+	public File getExportDirectory(){
 		return requestDirectory("Export Location", null);
 	}
 	
