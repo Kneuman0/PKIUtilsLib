@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,9 @@ import com.zeva.tlgen.utils.xml.JAXBTrustListUnmarshallerV5;
 import com.zeva.tlgen.utils.xml.XMLTrustListUnmarshaller;
 
 import biz.ui.filesystem.FriendlyExtensionFilter;
-import fun.personalacademics.model.AATLParser;
 import fun.personalacademics.model.CertificateBean;
 import fun.personalacademics.popup.GetURLPopup;
+import fun.personalacademics.utils.AATLParser;
 import javafx.scene.control.ButtonType;
 
 @SuppressWarnings("restriction")
@@ -91,5 +92,20 @@ public abstract class TrustListParsingController extends CryptToolController{
 	
 	protected List<CertificateBean> extractCertsFromAATLXML(File xml) throws FileNotFoundException{
 		return new AATLParser(xml).getCerts();
+	}
+	
+	protected List<CertificateBean> extractCertsFromAATLURL(){
+		List<CertificateBean> beans = new ArrayList<>();
+		GetURLPopup urlPop = new GetURLPopup();
+		Optional<ButtonType> result = urlPop.showAndWait();
+		if(result.isPresent() && result.get() == ButtonType.OK){
+			try {
+				beans.addAll(new AATLParser(urlPop.getURL()).getCerts());
+			} catch (Exception e) {
+				displayErrorMessage("URL Error", "There was an error reading the URL", null, e);
+			}
+		}
+		
+		return beans;
 	}
 }
