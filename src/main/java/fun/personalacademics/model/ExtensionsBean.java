@@ -61,33 +61,37 @@ public class ExtensionsBean extends X509CertificateHolder{
 	}
 	
 	public String getExtenstionValue(ASN1ObjectIdentifier oid) throws CertificateParsingException{
-		String value = "";
-		if(oid.getId().equals(Extension.authorityInfoAccess.getId())){
-			value += getAuthorityInfoAccess().toString();	
-		}else if(oid.getId().equals(Extension.cRLDistributionPoints.getId())){
-			value += getCRLDistPoints().toString();
-		}else if(oid.getId().equals(Extension.policyMappings.getId())){
-			value += getPolicyMappings().toString();
-		}else if(oid.getId().equals(Extension.cRLNumber.getId())){
-			value += getCRLNumber().getCRLNumber().toString();
-		}else if(oid.getId().equals(Extension.keyUsage.getId())){
-			value += getKeyUsage().toString();
-		}else if(oid.getId().equals(Extension.basicConstraints.getId())){
-			try {
-				value += getBasicConstraints().toString();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}else{
-			try {
-				value += getExtensions().getExtension(oid).getParsedValue().toString();
-			} catch (Exception e) {
-				value += "Unknown Extension: " + oid.toString();
-			}
-		}
 		
-		return value;
+			String value = "";
+			if(oid.getId().equals(Extension.authorityInfoAccess.getId())){
+				value += getAuthorityInfoAccess().toString();	
+			}else if(oid.getId().equals(Extension.cRLDistributionPoints.getId())){
+				value += getCRLDistPoints().toString();
+			}else if(oid.getId().equals(Extension.policyMappings.getId())){
+				value += getPolicyMappings().toString();
+			}else if(oid.getId().equals(Extension.cRLNumber.getId())){
+				value += getCRLNumber().getCRLNumber().toString();
+			}else if(oid.getId().equals(Extension.keyUsage.getId())){
+				value += getKeyUsage().toString();
+			}else if(oid.getId().equals(Extension.basicConstraints.getId())){
+				try {
+					value += getBasicConstraints().toString();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else{
+				try {
+					value += getExtensions().getExtension(oid).getParsedValue().toString();
+				} catch (Exception e) {
+					value += "Unknown Extension: " + oid.toString();
+				}
+			}
+			
+			return value;
+
+		
+		
 	}
 	
 	public AuthorityInfoAccess getAuthorityInfoAccess() throws CertificateParsingException{

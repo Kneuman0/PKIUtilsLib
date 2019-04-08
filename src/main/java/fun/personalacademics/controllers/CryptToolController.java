@@ -6,11 +6,13 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.DigestInputStream;
+import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
@@ -148,6 +150,23 @@ public abstract class CryptToolController extends ControllerUtils implements IPo
 	public List<CertificateBean> importDefaultJavaKeyStores(){
 		List<File> files = requestFiles("All Files", null);
 		return encapsulateJavaKeyStores(files);
+	}
+	
+	public void exportCertsToJavaKeyStore(List<CertificateBean> certs, File location) {
+		try{
+			
+			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keyStore.load(null);
+			for(int i = 0; i < certs.size(); i++) {
+				keyStore.setCertificateEntry("cert" + i, certs.get(i).getParentCert());
+			}
+			
+			FileOutputStream outStream = new FileOutputStream(location);
+			keyStore.store(outStream, "changeit".toCharArray());
+		}catch(Exception exp){
+			displayErrorMessage("File Error", "Error Saving to File", null, exp);
+		}
+		
 	}
 	
 	public void exportCertsToPem(List<CertificateBean> certs, File location) {
