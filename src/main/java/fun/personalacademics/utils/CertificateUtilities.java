@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Base64;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -32,9 +33,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import biz.ui.filesystem.FriendlyExtensionFilter;
 import fun.personalacademics.model.CertificateBean;
 import javafx.stage.FileChooser.ExtensionFilter;
-import sun.misc.BASE64Encoder;
 
-@SuppressWarnings("restriction")
 public abstract class CertificateUtilities{
 	
 	
@@ -135,8 +134,8 @@ public abstract class CertificateUtilities{
 
 	
 	public static String toPemFormat(X509Certificate cert) throws CertificateEncodingException{
-		BASE64Encoder encoder = new BASE64Encoder();
-		return toPemFormat(encoder.encode(cert.getEncoded()));
+		String encoded = Base64.getEncoder().encodeToString(cert.getEncoded());
+		return toPemFormat(encoded);
 	
 	}
 	
@@ -169,8 +168,7 @@ public abstract class CertificateUtilities{
 	public static X509Certificate getCertWithoutLineBreaks(X509Certificate cert){
 		X509Certificate newCert = null;
 		try {
-			BASE64Encoder encoder = new BASE64Encoder();
-			String base64 = encoder.encode(cert.getEncoded()).replaceAll("[ \n\t\r]", "");
+			String base64 = Base64.getEncoder().encodeToString(cert.getEncoded()).replaceAll("[ \n\t\r]", "");
 			String begin = "-----BEGIN CERTIFICATE-----\n";
 			String end = "\n-----END CERTIFICATE-----";
 			String total = begin + base64 + end;

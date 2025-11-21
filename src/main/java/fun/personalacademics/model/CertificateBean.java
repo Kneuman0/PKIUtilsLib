@@ -8,12 +8,11 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.bouncycastle.asn1.x509.Extension;
 
@@ -171,7 +170,7 @@ public class CertificateBean extends ProviderAttribute implements ICertificateBe
 
 	public String getBase64Parent() {
 		try {
-			return DatatypeConverter.printBase64Binary(parentCert.getEncoded());
+			return Base64.getEncoder().encodeToString(parentCert.getEncoded());
 		} catch (CertificateEncodingException e) {
 			e.printStackTrace();
 			return "Error with cert";
@@ -216,7 +215,7 @@ public class CertificateBean extends ProviderAttribute implements ICertificateBe
 			builder.append("\n\nX509SKI: " + getX509SKI());
 			builder.append("\nIs Compromised: " + isROCACompromised());
 			builder.append("\nThumbprint: " + getThumbprint());
-			builder.append("\n\nBase64Encoded: " + DatatypeConverter.printBase64Binary(parentCert.getEncoded()));
+			builder.append("\n\nBase64Encoded: " + Base64.getEncoder().encodeToString(parentCert.getEncoded()));
 		} catch (CertificateParsingException e) {
 			e.printStackTrace();
 		} catch (CertificateEncodingException e) {
@@ -329,36 +328,27 @@ public class CertificateBean extends ProviderAttribute implements ICertificateBe
 		return new ExtensionsBean(getParentCert());
 	}
 
-	@Override
-	public ProviderAttributeType getType() {
+    @Override
+    public ProviderAttributeType getType() {
+        return type;
+    }
 
-		return type;
-	}
+    @Override
+    public SimpleObjectProperty<ProviderAttribute> nameProperty() {
+        // TODO Auto-generated method stub
+        return new SimpleObjectProperty<ProviderAttribute>(this);
+    }
 
-	/**
-	 * Use of this method assumed a check has been placed using the getType()
-	 * first to determine the Type of this subclass
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public CertificateBean getEncapsulatedBean() {
+    @Override
+    @SuppressWarnings("unchecked")
+    public CertificateBean getEncapsulatedBean() {
+        return this;
+    }
 
-		return this;
-	}
-
-
-	@Override
-	public ProviderAttribute initialize() {
-		// deliberately empty method
-		return this;
-	}
-
-	@Override
-	public SimpleObjectProperty<ProviderAttribute> nameProperty() {
-		// TODO Auto-generated method stub
-		return new SimpleObjectProperty<ProviderAttribute>(this);
-	}
-
-
+    @Override
+    public ProviderAttribute initialize() {
+        // deliberately empty method
+        return this;
+    }
 
 }
