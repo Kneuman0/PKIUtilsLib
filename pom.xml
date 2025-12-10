@@ -11,6 +11,13 @@
 		<maven.compiler.release>17</maven.compiler.release>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
@@ -86,15 +93,15 @@
 		</dependency>
 		<!-- Below can be found @ https://github.com/Kneuman0/GUIUtils.git -->
 		<dependency>
-			<groupId>GUIUtils</groupId>
+			<groupId>com.github.Kneuman0</groupId>
 			<artifactId>GUIUtils</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>-SNAPSHOT</version>
 		</dependency>
 		<!-- Below can be found @ https://github.com/Kneuman0/TrustListDataModelLib.git -->
 		<dependency>
-			<groupId>TrustListDataModelLib</groupId>
+			<groupId>com.github.Kneuman0</groupId>
 			<artifactId>TrustListDataModelLib</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
