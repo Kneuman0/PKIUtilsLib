@@ -93,15 +93,15 @@
 		</dependency>
 		<!-- Below can be found @ https://github.com/Kneuman0/GUIUtils.git -->
 		<dependency>
-			<groupId>com.github.Kneuman0</groupId>
+			<groupId>GUIUtils</groupId>
 			<artifactId>GUIUtils</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- Below can be found @ https://github.com/Kneuman0/TrustListDataModelLib.git -->
 		<dependency>
-			<groupId>com.github.Kneuman0</groupId>
+			<groupId>TrustListDataModelLib</groupId>
 			<artifactId>TrustListDataModelLib</artifactId>
-			<version>master-SNAPSHOT</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
