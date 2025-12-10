@@ -95,13 +95,13 @@
 		<dependency>
 			<groupId>com.github.Kneuman0</groupId>
 			<artifactId>GUIUtils</artifactId>
-			<version>-SNAPSHOT</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 		<!-- Below can be found @ https://github.com/Kneuman0/TrustListDataModelLib.git -->
 		<dependency>
 			<groupId>com.github.Kneuman0</groupId>
 			<artifactId>TrustListDataModelLib</artifactId>
-			<version>-SNAPSHOT</version>
+			<version>master-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
